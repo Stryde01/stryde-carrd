@@ -1,7 +1,7 @@
 (() => {
   const translations = {
     en: {
-      pageTitle: "STRYDE — Voxel Model Artist",
+      pageTitle: "STRYDE — Portfolio",
       pageDescription: "Voxel model artist portfolio — custom creatures, weapons, props, and environment assets for games and mods.",
       backToTop: "Back to top",
       switchLanguage: "Switch language to Chinese",
@@ -33,7 +33,7 @@
       mobileFooter: "STRYDE · VOXEL MODEL ARTIST"
     },
     zh: {
-      pageTitle: "STRYDE — 体素模型师",
+      pageTitle: "STRYDE — 作品集",
       pageDescription: "体素模型师作品集：为游戏与模组制作角色、武器、道具与场景模型。",
       backToTop: "返回顶部",
       switchLanguage: "切换为英文",
