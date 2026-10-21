@@ -22,8 +22,9 @@
       swipeToExplore: "SWIPE TO BROWSE",
       galleryWindowAria: "Portfolio items. Use left and right arrow keys to navigate.",
       addYourModel: "ADD YOUR MODEL",
-      imageSlot: "IMAGE SLOT",
-      discordSoon: "DISCORD · SOON",
+      modelSlot: "3D MODEL SLOT",
+      discordLink: "DISCORD · stryde033",
+      discordLinkAria: "Open stryde033 on Discord",
       viewLarger: "View larger",
       lightboxLabel: "Work preview",
       lightboxAlt: "Portfolio work",
@@ -54,8 +55,9 @@
       swipeToExplore: "左右滑动",
       galleryWindowAria: "作品列表。使用键盘左右方向键切换作品。",
       addYourModel: "添加你的模型",
-      imageSlot: "图片区域",
-      discordSoon: "DISCORD · 稍后",
+      modelSlot: "3D 模型展示位",
+      discordLink: "DISCORD · stryde033",
+      discordLinkAria: "在 Discord 上打开 stryde033",
       viewLarger: "查看大图",
       lightboxLabel: "作品预览",
       lightboxAlt: "作品图片",
@@ -108,7 +110,8 @@
       languageButton.title = dictionary.switchLanguage;
     }
 
-    if (lightboxImage) lightboxImage.alt = dictionary.lightboxAlt;
+    if (lightboxModel) lightboxModel.setAttribute("alt", dictionary.lightboxAlt);
+    document.querySelectorAll(".work-model").forEach((model) => model.setAttribute("alt", dictionary.lightboxAlt));
 
     if (persistChoice) { try { window.localStorage.setItem(storageKey, lang); } catch (_) {} }
   }
@@ -120,13 +123,33 @@
   const intro = document.querySelector(".intro");
   const gallery = document.querySelector(".gallery");
   const track = document.querySelector("#gallery-track");
+  const works = Array.isArray(window.PORTFOLIO_WORKS) && window.PORTFOLIO_WORKS.length
+    ? window.PORTFOLIO_WORKS
+    : [{ accent: "#8c69c7" }, { accent: "#5d8e83" }, { accent: "#ba8a54" }, { accent: "#6582a7" }];
+
+  works.forEach((work) => {
+    const article = document.createElement("article");
+    article.className = "work-slide";
+    article.dataset.accent = work.accent || "#8c69c7";
+    if (work.model) article.dataset.model = work.model;
+    if (work.poster) article.dataset.image = work.poster;
+    if (work.background) article.dataset.background = work.background;
+    article.innerHTML = `
+      <div class="work-media">
+        <model-viewer class="work-model" alt="" camera-controls auto-rotate auto-rotate-delay="1200" rotation-per-second="12deg" camera-orbit="30deg 68deg 95%" tone-mapping="aces" exposure="0.65" shadow-intensity="1" shadow-softness="0.9" loading="lazy" reveal="auto"></model-viewer>
+        <div class="empty-media"><span class="empty-cross" aria-hidden="true">+</span><span data-i18n="addYourModel">ADD YOUR MODEL</span><small data-i18n="modelSlot">3D MODEL SLOT</small></div>
+        <button class="media-expand" type="button" aria-label="View larger" data-i18n-aria="viewLarger"><span aria-hidden="true">↗</span></button>
+      </div>`;
+    track.append(article);
+  });
+
   const galleryWindow = document.querySelector("#gallery-window");
   const slides = [...document.querySelectorAll(".work-slide")];
   const currentIndex = document.querySelector("#current-index");
   const totalIndex = document.querySelector("#total-index");
   const exploreLink = document.querySelector("#explore-link");
   const lightbox = document.querySelector("#lightbox");
-  const lightboxImage = document.querySelector("#lightbox-image");
+  const lightboxModel = document.querySelector("#lightbox-model");
   const lightboxClose = document.querySelector("#lightbox-close");
   const mediaQuery = window.matchMedia("(max-width: 720px)");
   const reducedMotion = window.matchMedia("(prefers-reduced-motion: reduce)");
@@ -246,16 +269,18 @@
     if (empty) empty.remove();
   }
 
-  function setWorkImages() {
+  function setWorkModels() {
     slides.forEach((slide) => {
       const media = slide.querySelector(".work-media");
-      const imagePath = slide.dataset.image;
-      const backgroundPath = slide.dataset.background || imagePath;
-      if (imagePath) {
-        media.style.backgroundImage = `url("${imagePath}")`;
-        media.style.backgroundSize = "cover";
-        media.style.backgroundPosition = "center";
-        slide.classList.add("has-image");
+      const model = media.querySelector(".work-model");
+      const modelPath = slide.dataset.model;
+      const posterPath = slide.dataset.image;
+      const backgroundPath = slide.dataset.background || posterPath;
+      if (model && posterPath) model.setAttribute("poster", posterPath);
+      if (model && modelPath) {
+        model.setAttribute("src", modelPath);
+        model.setAttribute("environment-image", "vendor/environments/moon_1k.hdr");
+        slide.classList.add("has-model");
         const empty = media.querySelector(".empty-media");
         if (empty) empty.remove();
       }
@@ -264,10 +289,12 @@
   }
 
   function openLightbox(slide) {
-    const imagePath = slide && slide.dataset.image;
-    if (!imagePath || !lightbox || !lightboxImage) return;
+    const modelPath = slide && slide.dataset.model;
+    if (!modelPath || !lightbox || !lightboxModel) return;
     lastLightboxTrigger = document.activeElement;
-    lightboxImage.src = imagePath;
+    if (slide.dataset.image) lightboxModel.setAttribute("poster", slide.dataset.image);
+    lightboxModel.setAttribute("environment-image", "vendor/environments/moon_1k.hdr");
+    lightboxModel.setAttribute("src", modelPath);
     lightbox.hidden = false;
     document.documentElement.classList.add("lightbox-open");
     if (lightboxClose) lightboxClose.focus();
@@ -277,7 +304,10 @@
     if (!lightbox || lightbox.hidden) return;
     lightbox.hidden = true;
     document.documentElement.classList.remove("lightbox-open");
-    if (lightboxImage) lightboxImage.removeAttribute("src");
+    if (lightboxModel) {
+      lightboxModel.removeAttribute("src");
+      lightboxModel.removeAttribute("poster");
+    }
     if (lastLightboxTrigger && typeof lastLightboxTrigger.focus === "function") lastLightboxTrigger.focus();
     lastLightboxTrigger = null;
   }
@@ -396,7 +426,7 @@
   }
 
   setIntroImage();
-  setWorkImages();
+  setWorkModels();
   mobileMode();
   setActiveSlide(0);
   window.addEventListener("scroll", onScroll, { passive: true });
