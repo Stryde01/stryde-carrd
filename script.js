@@ -21,7 +21,6 @@
       scrollToMove: "SCROLL TO BROWSE",
       swipeToExplore: "SWIPE TO BROWSE",
       galleryWindowAria: "Portfolio items. Use left and right arrow keys to navigate.",
-      infoAria: "Process and FAQ",
       addYourModel: "ADD YOUR MODEL",
       modelSlot: "3D MODEL SLOT",
       discordLink: "DISCORD · stryde033",
@@ -55,7 +54,6 @@
       scrollToMove: "滚动浏览",
       swipeToExplore: "左右滑动",
       galleryWindowAria: "作品列表。使用键盘左右方向键切换作品。",
-      infoAria: "合作流程与常见问题",
       addYourModel: "添加你的模型",
       modelSlot: "3D 模型展示位",
       discordLink: "DISCORD · stryde033",
@@ -114,7 +112,6 @@
 
     if (lightboxModel) lightboxModel.setAttribute("alt", dictionary.lightboxAlt);
     document.querySelectorAll(".work-model").forEach((model) => model.setAttribute("alt", dictionary.lightboxAlt));
-    renderInfo(lang);
 
     if (persistChoice) { try { window.localStorage.setItem(storageKey, lang); } catch (_) {} }
   }
@@ -147,8 +144,6 @@
   });
 
   const galleryWindow = document.querySelector("#gallery-window");
-  const info = document.querySelector("#info");
-  const infoInner = document.querySelector("#info-inner");
   const slides = [...document.querySelectorAll(".work-slide")];
   const currentIndex = document.querySelector("#current-index");
   const totalIndex = document.querySelector("#total-index");
@@ -317,41 +312,6 @@
     lastLightboxTrigger = null;
   }
 
-  function renderInfo(lang) {
-    if (!infoInner) return;
-    const sections = window.PORTFOLIO_SECTIONS || {};
-    const data = sections[lang] || sections.en;
-    if (!data) return;
-    const steps = data.process.map((step, index) => `
-      <li class="process-step">
-        <span class="process-number">${String(index + 1).padStart(2, "0")}</span>
-        <div class="process-body">
-          <div class="process-top"><h3>${step.title}</h3>${step.time ? `<span class="process-time">${step.time}</span>` : ""}</div>
-          <p>${step.body}</p>
-        </div>
-      </li>`).join("");
-    const faqs = data.faq.map((item) => `
-      <details class="faq-item">
-        <summary>${item.q}</summary>
-        <p>${item.a}</p>
-      </details>`).join("");
-    infoInner.innerHTML = `
-      <section class="info-block">
-        <p class="eyebrow"><span class="eyebrow-line"></span> <span>${data.processLabel}</span></p>
-        <h2>${data.processTitle}</h2>
-        <p class="info-intro">${data.processIntro}</p>
-        <ol class="process-list">${steps}</ol>
-        <p class="info-note">${data.processNote}</p>
-      </section>
-      <section class="info-block">
-        <p class="eyebrow"><span class="eyebrow-line"></span> <span>${data.faqLabel}</span></p>
-        <h2>${data.faqTitle}</h2>
-        <div class="faq-list">${faqs}</div>
-        <p class="info-note">${data.faqNote}</p>
-      </section>`;
-    update();
-  }
-
   function mobileMode() {    isMobile = mediaQuery.matches;
     isReduced = reducedMotion.matches;
     resizeParticles();
@@ -364,10 +324,6 @@
       gallery.style.removeProperty("transform");
       gallery.style.removeProperty("opacity");
       track.style.removeProperty("transform");
-      info.style.removeProperty("transform");
-      info.style.removeProperty("opacity");
-      info.style.removeProperty("pointer-events");
-      infoInner.style.removeProperty("transform");
       if (isMobile) scrollSpace.style.display = "none";
       else scrollSpace.style.display = "block";
       return;
@@ -384,33 +340,22 @@
     const progress = clamp(window.scrollY / maxY);
 
     // Phase 1: the intro and portrait shrink/fade away.
-    const introT = smooth(clamp(progress / 0.16));
+    const introT = smooth(clamp(progress / 0.30));
     intro.style.transform = `translate3d(0, ${-36 * introT}px, 0) scale(${1 - 0.105 * introT})`;
     intro.style.opacity = String(1 - introT);
     intro.style.pointerEvents = introT > 0.92 ? "none" : "auto";
 
     // Phase 2: the portfolio gallery rises from the bottom.
-    const revealT = smooth(clamp((progress - 0.06) / 0.16));
+    const revealT = smooth(clamp((progress - 0.13) / 0.27));
+    gallery.style.transform = `translate3d(0, ${(1 - revealT) * 105}%, 0)`;
+    gallery.style.opacity = String(revealT);
+    gallery.style.pointerEvents = revealT > 0.92 ? "auto" : "none";
 
     // Phase 3: continued vertical scroll becomes horizontal gallery travel.
-    const horizontalT = smooth(clamp((progress - 0.28) / 0.30));
-
-    // Phase 4: process and FAQ panel, then its internal scroll.
-    const infoRevealT = smooth(clamp((progress - 0.56) / 0.08));
-    const infoScrollT = smooth(clamp((progress - 0.68) / 0.20));
-
-    gallery.style.transform = `translate3d(0, ${(1 - revealT) * 105}%, 0)`;
-    gallery.style.opacity = String(revealT * (1 - infoRevealT));
-    gallery.style.pointerEvents = revealT > 0.92 && infoRevealT < 0.5 ? "auto" : "none";
-
+    const horizontalT = smooth(clamp((progress - 0.40) / 0.60));
     const maxX = Math.max(0, track.scrollWidth - window.innerWidth);
-    track.style.transform = `translate3d(${-maxX * horizontalT}px, 0, 0)`;
-
-    info.style.opacity = "1";
-    info.style.transform = `translate3d(0, ${(1 - infoRevealT) * 100}%, 0)`;
-    info.style.pointerEvents = infoRevealT > 0.92 ? "auto" : "none";
-    const infoMax = Math.max(0, infoInner.scrollHeight - window.innerHeight);
-    infoInner.style.transform = `translate3d(0, ${-infoMax * infoScrollT}px, 0)`;
+    const x = maxX * horizontalT;
+    track.style.transform = `translate3d(${-x}px, 0, 0)`;
 
     const centerX = window.innerWidth / 2;
     let closestIndex = 0;
@@ -426,7 +371,7 @@
     setActiveSlide(closestIndex);
 
     const hint = document.querySelector(".edge-hint");
-    if (hint) hint.style.opacity = progress > 0.50 ? "0" : ".7";
+    if (hint) hint.style.opacity = progress > 0.45 ? "0" : ".7";
   }
 
   function scrollToGalleryStart() {
@@ -435,18 +380,12 @@
       return;
     }
     const maxY = Math.max(1, document.documentElement.scrollHeight - window.innerHeight);
-    window.scrollTo({ top: maxY * 0.30, behavior: "smooth" });
+    window.scrollTo({ top: maxY * 0.43, behavior: "smooth" });
   }
 
   exploreLink.addEventListener("click", (event) => {
     event.preventDefault();
     scrollToGalleryStart();
-  });
-
-  infoInner.addEventListener("click", (event) => {
-    if (event.target.closest(".faq-item summary") && !isMobile && !isReduced) {
-      window.requestAnimationFrame(update);
-    }
   });
 
   galleryWindow.addEventListener("keydown", (event) => {
@@ -456,7 +395,7 @@
     const next = clamp(lastActive + (event.key === "ArrowRight" ? 1 : -1), 0, slides.length - 1);
     const maxY = Math.max(1, document.documentElement.scrollHeight - window.innerHeight);
     const targetT = slides.length <= 1 ? 0 : next / (slides.length - 1);
-    const p = 0.28 + targetT * 0.30;
+    const p = 0.40 + targetT * 0.60;
     window.scrollTo({ top: maxY * p, behavior: "smooth" });
   });
 
