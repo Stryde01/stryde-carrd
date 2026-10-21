@@ -57,7 +57,7 @@
       addYourModel: "添加你的模型",
       modelSlot: "3D 模型展示位",
       discordLink: "DISCORD · stryde001",
-      discordLinkAria: "在 Discord 上打开 stryde0001",
+      discordLinkAria: "在 Discord 上打开 stryde001",
       viewLarger: "查看大图",
       lightboxLabel: "作品预览",
       lightboxAlt: "作品图片",
