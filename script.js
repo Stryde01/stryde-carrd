@@ -397,7 +397,7 @@
 
     // Phase 4: process and FAQ panel, then its internal scroll.
     const infoRevealT = smooth(clamp((progress - 0.56) / 0.08));
-    const infoScrollT = smooth(clamp((progress - 0.64) / 0.24));
+    const infoScrollT = smooth(clamp((progress - 0.68) / 0.20));
 
     gallery.style.transform = `translate3d(0, ${(1 - revealT) * 105}%, 0)`;
     gallery.style.opacity = String(revealT * (1 - infoRevealT));

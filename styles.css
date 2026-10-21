@@ -92,7 +92,7 @@ h2 { font-size: clamp(36px, 4.2vw, 58px); line-height: .93; letter-spacing: -.07
 .info { position: absolute; z-index: 6; inset: 0; padding: 0 clamp(24px, 8vw, 130px); background: var(--bg); opacity: 0; pointer-events: none; transform: translateY(6%); overflow: hidden; will-change: transform, opacity; }
 .info::before { content: ""; position: absolute; inset: 0; pointer-events: none; background: radial-gradient(ellipse at 20% 0%, rgba(140,105,199,.12), transparent 55%); }
 .info::after { content: ""; position: absolute; z-index: 2; top: 0; left: 0; right: 0; height: 110px; pointer-events: none; background: linear-gradient(180deg, var(--bg) 0%, var(--bg) 58%, transparent 100%); }
-.info-inner { position: relative; z-index: 1; max-width: 1120px; margin: 0 auto; padding: clamp(90px, 11vh, 128px) 0 100px; will-change: transform; }
+.info-inner { position: relative; z-index: 1; max-width: 1120px; margin: 0 auto; padding: clamp(120px, 13vh, 160px) 0 100px; will-change: transform; }
 .info-block + .info-block { margin-top: clamp(70px, 10vh, 120px); }
 .info-block h2 { margin-bottom: 22px; }
 .info-intro { max-width: 720px; color: #b6b7ad; font-size: 14px; line-height: 1.9; margin-bottom: 34px; }
