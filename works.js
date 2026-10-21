@@ -18,7 +18,7 @@ window.PORTFOLIO_WORKS = [
   { model: "assets/models/model.gltf", poster: "", accent: "#8c69c7" },
 
   // 作品 2
-  { model: "", poster: "", accent: "#5d8e83" },
+  { model: "assets/models/读卡器.gltf", poster: "", accent: "#5d8e83" },
 
   // 作品 3
   { model: "", poster: "", accent: "#ba8a54" },
