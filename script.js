@@ -326,7 +326,7 @@
       <li class="process-step">
         <span class="process-number">${String(index + 1).padStart(2, "0")}</span>
         <div class="process-body">
-          <div class="process-top"><h3>${step.title}</h3><span class="process-time">${step.time}</span></div>
+          <div class="process-top"><h3>${step.title}</h3>${step.time ? `<span class="process-time">${step.time}</span>` : ""}</div>
           <p>${step.body}</p>
         </div>
       </li>`).join("");

@@ -99,6 +99,7 @@ h2 { font-size: clamp(36px, 4.2vw, 58px); line-height: .93; letter-spacing: -.07
 .info-note { max-width: 760px; color: var(--quiet); font-size: 11px; line-height: 1.8; margin-top: 28px; }
 .process-list { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px; }
 .process-step { display: grid; grid-template-columns: auto 1fr; gap: 16px; padding: 20px; border: 1px solid rgba(236,235,228,.14); border-radius: var(--radius); background: rgba(236,235,228,.025); }
+.process-step:last-child:nth-child(odd) { grid-column: 1 / -1; }
 .process-number { color: #aab69b; font: 10px var(--mono); letter-spacing: .08em; }
 .process-top { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; margin-bottom: 8px; }
 .process-top h3 { font-size: 18px; font-weight: 500; letter-spacing: -.03em; margin: 0; }
